@@ -1,0 +1,6 @@
+chromadb
+wikipedia-api
+sentence-transformers
+nltk
+python-dotenv
+ollama 
