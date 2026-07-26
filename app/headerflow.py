@@ -7,7 +7,7 @@ import json
 
 load_dotenv()
 
-HEADER = os.getenv("identity")
+HEADER = os.getenv("headers")
 
 
 def add_headers(data):
@@ -51,11 +51,13 @@ def add_headers(data):
         
         topic = info['topic']
         get_headers = call_llm(prompt)
+        get_headers = get_headers.replace("```json", "").replace("```", "").strip()
+        data = json.loads(get_headers)
         headers.append({
             "id" : i+1,
-            "topic" : info['topic'],
+            "topic" : topic,
             'orginal_content' : info['chunks'],
-            "headers" : json.loads(get_headers)
+            "headers" : data['headers']
         })
 
     load_header = load_cache(HEADER)
@@ -69,14 +71,12 @@ def add_headers(data):
 
 def call_shifter():
     slicer = call_slicer();
-    result = []
+    shifters = []
 
     for i in slicer:
         headers = add_headers(i)
-        break
-        result.append(headers)
-    # return result
+        shifters.append(headers)
+    return headers
 
 
-    
 print(call_shifter())

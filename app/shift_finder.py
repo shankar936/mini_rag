@@ -36,10 +36,10 @@ def embedding(data):
 
 def semantic_chunking(id, data, thersold):
     embed = embedding(data['text'])
-
     chunks = []
 
     current_chunk = embed[0]['content']
+    last_score = 0
 
     for i in range(1, len(embed)):
         prev = embed[i-1]['embedding']
@@ -47,6 +47,7 @@ def semantic_chunking(id, data, thersold):
        
 
         score = cosine_similarity(prev, curr)  
+        last_score = score
 
         if score > thersold:
             current_chunk += "".join(embed[i]['content'])
@@ -61,6 +62,14 @@ def semantic_chunking(id, data, thersold):
             })
             current_chunk = embed[i]['content']
 
+    chunks.append({
+        "id": id + 1,
+        "topic": data['id'],
+        "chunks": current_chunk,
+        "Score": last_score
+    })
+            
+
     return chunks
 
 
@@ -68,12 +77,13 @@ def semantic_chunking(id, data, thersold):
 def call_slicer():
 
     sentences = split_text()
-
     shift_finder = []
+
 
     for i, data in enumerate(sentences):
         shifter = semantic_chunking(i, data, 0.5)
         shift_finder.append(shifter)
 
     return shift_finder;
+
 
