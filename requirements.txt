@@ -4,3 +4,4 @@ sentence-transformers
 nltk
 python-dotenv
 ollama 
+streamlit
