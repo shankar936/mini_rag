@@ -1,1 +1,1 @@
-A Mini Rag (Retrival Augmented Generation) project for beginners 
+# A Mini Rag (Retrival Augmented Generation) project for beginners 
