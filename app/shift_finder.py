@@ -17,6 +17,7 @@ def cosine_similarity(vec_a, vec_b):
     
 
 
+
 def embedding(data):
     embed = []
 
@@ -34,12 +35,11 @@ def embedding(data):
 
 
 
-def semantic_chunking(id, data, thersold):
+def semantic_chunking(data, thersold):
     embed = embedding(data['text'])
     chunks = []
 
     current_chunk = embed[0]['content']
-    last_score = 0
 
     for i in range(1, len(embed)):
         prev = embed[i-1]['embedding']
@@ -47,26 +47,27 @@ def semantic_chunking(id, data, thersold):
        
 
         score = cosine_similarity(prev, curr)  
-        last_score = score
 
         if score > thersold:
             current_chunk += "".join(embed[i]['content'])
             
         else :
-            chunks.append({
-                "id" : id +1,
-                "topic" : data['id'],
-                "chunks" : current_chunk,
-                "Score" : score
-                
-            })
-            current_chunk = embed[i]['content']
+                chunks.append({
+                    "id" : data['id'],
+                    "topic" : data['topic'],
+                    "source" : data['source'],
+                    "chunks" : current_chunk,
+                    "Similarity_Score" : score
+                    
+                })
+                current_chunk = embed[i]['content']
 
     chunks.append({
-        "id": id + 1,
-        "topic": data['id'],
-        "chunks": current_chunk,
-        "Score": last_score
+        "id" : data['id'],
+        "topic" : data['topic'],
+        "source" : data['source'],
+        "chunks" : current_chunk,
+        "Similarity_Score" : score
     })
             
 
@@ -80,8 +81,8 @@ def call_slicer():
     shift_finder = []
 
 
-    for i, data in enumerate(sentences):
-        shifter = semantic_chunking(i, data, 0.5)
+    for data in sentences:
+        shifter = semantic_chunking(data, 0.3)
         shift_finder.append(shifter)
 
     return shift_finder;

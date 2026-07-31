@@ -25,12 +25,13 @@ def split_text():
         chunk = sent_tokenize(article['content'])
 
         chunks.append({
-            "id" : topic,
+            "id" : article['id'],
+            'source' : article['Source'],
+            "topic" : topic,
             "length" : len(chunk),
-            "text" : chunk
+            "text" : chunk[:2000]
         })
+
     return chunks
-
-
 
 

@@ -1,4 +1,4 @@
-from cache.utilis import load_cache, save_cache
+from cache.utilis import load_cache, save_cache, is_cache
 from .mind_valut import call_llm
 import os 
 from dotenv import load_dotenv
@@ -28,9 +28,16 @@ def parse_llm_json(raw_text: str) -> dict:
 def doc_aug(chunk):
 
     aug = []
-
    
     for i, chunk in enumerate(chunk):
+
+
+        if is_cache(AUGMENTATION, chunk['topic']):
+                    print(f"{chunk['topic']} Found in docs file")
+                    load_header = load_cache(HEADER)
+                    return load_header
+
+        
         prompt = f"""
             your an expert to provide doc augmentation for Retrivel augmented generation (RAG)
 
@@ -98,8 +105,6 @@ def doc_aug(chunk):
     print(f"Completed generationg {chunk['topic']}")
 
     return aug
-
-
 
 
 print(helper())

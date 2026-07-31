@@ -14,17 +14,19 @@ def generation(query):
     ])
 
     prompt = f"""You are a helpful assistant.
-Use only the context below to answer the question.
-If the answer is not in the context say I don't know.
-
-Rules:
-- No hallucination
-- Use only provided context
-
-Question: {query}
+Answer the question using ONLY the information in the context below.
 
 Context:
 {context}
+
+Question: {query}
+
+Instructions:
+- Synthesize a clear answer IN YOUR OWN WORDS by combining relevant information from the context above.
+- Do not copy sentences directly from the context — rephrase and summarize instead.
+- If multiple context chunks are relevant, combine them into one coherent answer.
+- Every claim in your answer must be traceable back to something stated in the context.
+- If the answer is not present in the context, say "I don't know based on the provided information."
 
 Answer:"""
 
@@ -35,3 +37,10 @@ Answer:"""
         response = "Error generating response."
 
     return response, call_retrivel   # ← return both
+
+
+query = input('Enter your Query: ')
+response, retrive = generation(query)
+print(response)
+print(retrive)
+      

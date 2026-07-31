@@ -1,3 +1,5 @@
+import uuid
+
 import wikipediaapi
 from cache.utilis import load_cache, save_cache, is_cache
 import re
@@ -10,7 +12,7 @@ wiki = wikipediaapi.Wikipedia(user_agent="Rag Project", language='en')
 
 FILENAME = os.getenv("brain")
 
-def extract_text(topic: str):
+def extract_text(topic: str, main_heading: str):
 
     if is_cache(FILENAME, topic):
         print(f"{topic} found in folder, reading from cache.")
@@ -19,16 +21,17 @@ def extract_text(topic: str):
     else:
         print(f"{topic} not found in cache. Fetching from Wikipedia.")
         page = wiki.page(topic)
-        content = page.summary
+        content = page.text
 
         clean_text = clean_wikipedia(content)
 
         cache = load_cache(FILENAME)
         cache[topic] = {
-            "id": topic,
+            "id": str(uuid.uuid4()),
+            'topic' : topic,
             "status": "Success",
             "length": len(clean_text),
-            "Source" : "Wikipedia",
+            "Source" : f"{main_heading}_wikipedia",
             "content": clean_text
         }
         save_cache(FILENAME, cache)
@@ -56,23 +59,3 @@ def clean_wikipedia(text):
 
 
 
-
-
-topics = {
-    "Machine Learning",
-    "Artificial Intelligence",
-    "Deep Learning",
-    "Natural Language Processing",
-    "Computer Vision",
-    "Data Science",
-    "Neural Networks",
-    "Generative AI",
-    "Reinforcement Learning",
-    "Large Language Models"
-}
-
-
-
-if __name__ == '__main__':
-    for i in topics:
-        extract_text(i)
