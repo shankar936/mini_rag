@@ -19,3 +19,4 @@ app/
     mind_valut.py
 ```
 
+
