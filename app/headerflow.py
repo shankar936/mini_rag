@@ -12,18 +12,19 @@ HEADER = os.getenv("headers")
 
 def add_headers(data):
 
-
     headers = []
 
     topic = ''
     
-    for i, chunk in enumerate(data):
+    for i, info in enumerate(data):
+        print(f"Processing chunk {i+1}/{len(data)} for topic: {info['topic']}")
 
-        if is_cache(HEADER, chunk['topic']):
-            print(f"{chunk['topic']} Found in headerFlow file")
-            load_header = load_cache(HEADER)
-            return load_header
-      
+        if is_cache(HEADER, info['topic']):
+                print(f"{info['topic']} found in folder, reading from cache.")
+                cache = load_cache(HEADER)
+                content = cache[info['topic']]['content']
+
+        
         prompt = f"""
             You are an expert at generating semantic headers for a Retrieval-Augmented Generation (RAG) system.
 
@@ -41,6 +42,7 @@ def add_headers(data):
             Format:
 
             {{
+                "content": "...",
                 "headers": [
                     "...",
                     "...",
@@ -51,17 +53,17 @@ def add_headers(data):
             }}
 
             Chunk:
-            {chunk["chunks"]}
+            {info["chunks"]}
             """
-        topic = chunk['topic']
+        
+        topic = info['topic']
         get_headers = call_llm(prompt)
         get_headers = get_headers.replace("```json", "").replace("```", "").strip()
         data = json.loads(get_headers)
         headers.append({
-            "id" : chunk['id'],
+            "id" : i+1,
             "topic" : topic,
-            'source': chunk['source'],
-            'orginal_content' : chunk['chunks'],
+            'orginal_content' : info['chunks'],
             "headers" : data['headers']
         })
 
@@ -76,12 +78,12 @@ def add_headers(data):
 
 def call_shifter():
     slicer = call_slicer();
+    shifters = []
 
     for i in slicer:
         headers = add_headers(i)
-
+        shifters.append(headers)
     return headers
 
 
-
-call_shifter()
+print(call_shifter())
