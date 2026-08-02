@@ -17,7 +17,8 @@ def extract_text(topic: str, main_heading: str):
     if is_cache(FILENAME, topic):
         print(f"{topic} found in folder, reading from cache.")
         cache = load_cache(FILENAME)
-        content = cache[topic]['content']
+        return cache
+    
     else:
         print(f"{topic} not found in cache. Fetching from Wikipedia.")
         page = wiki.page(topic)
