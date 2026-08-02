@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import json
 import re
+import uuid
 
 load_dotenv()
 
@@ -27,16 +28,17 @@ def parse_llm_json(raw_text: str) -> dict:
 
 def doc_aug(chunk):
 
+    cache = load_cache(AUGMENTATION)
+
+    if is_cache(AUGMENTATION, chunk['topic']):
+        print(f"{chunk['topic']} Found in headerFlow file")
+        return cache['topic']
+
     aug = []
    
     for i, chunk in enumerate(chunk):
 
-
-        if is_cache(AUGMENTATION, chunk['topic']):
-                    print(f"{chunk['topic']} Found in docs file")
-                    load_header = load_cache(HEADER)
-                    return load_header
-
+        print(f'processing chunk {i + 1} of {len(chunk)} for topic: {chunk["topic"]}')
         
         prompt = f"""
             your an expert to provide doc augmentation for Retrivel augmented generation (RAG)
@@ -87,8 +89,9 @@ def doc_aug(chunk):
             continue
         
         aug.append({
-            "id" : i + 1,
+            "id" : str(uuid.uuid4()),
             "topic" : chunk['topic'],
+            "source" : chunk['source'],
             "original_content" : chunk['orginal_content'],
             "summary" : response['summary'],
             "headers" : chunk['headers'],
