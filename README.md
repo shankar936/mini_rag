@@ -30,7 +30,7 @@ app/
 - 💬 Generates accurate, context-aware responses using an LLM.
 
 ## Architecture Design
-
+```
 Indexing -> 
 
                                       INDEXING
@@ -69,6 +69,7 @@ Indexing ->
                                      +-------------+        +------+        +----------+
                                      | Merge/Clean |   -->  | LLM  |  -->   | Response |
                                      +-------------+        +------+        +----------+
+```
 
 ## Indexing Pipeline
 - harvest -> Fetches each topic from wikipedia and store in cache file for future use.
