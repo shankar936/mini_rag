@@ -16,13 +16,13 @@ def add_headers(data):
 
     topic = ''
     
-    for i, info in enumerate(data):
-        print(f"Processing chunk {i+1}/{len(data)} for topic: {info['topic']}")
+    for i, chunk in enumerate(data):
+        print(f"Processing chunk {i+1}/{len(data)} for topic: {chunk['topic']}")
 
-        if is_cache(HEADER, info['topic']):
-                print(f"{info['topic']} found in folder, reading from cache.")
-                cache = load_cache(HEADER)
-                content = cache[info['topic']]['content']
+        if is_cache(HEADER, chunk['topic']):
+                   print(f"{chunk['topic']} Found in headerFlow file")
+                   load_header = load_cache(HEADER)
+                   return load_header
 
         
         prompt = f"""
@@ -53,17 +53,17 @@ def add_headers(data):
             }}
 
             Chunk:
-            {info["chunks"]}
+            {chunk["chunks"]}
             """
         
-        topic = info['topic']
+        topic = chunk['topic']
         get_headers = call_llm(prompt)
         get_headers = get_headers.replace("```json", "").replace("```", "").strip()
         data = json.loads(get_headers)
         headers.append({
             "id" : i+1,
             "topic" : topic,
-            'orginal_content' : info['chunks'],
+            'orginal_content' : chunk['chunks'],
             "headers" : data['headers']
         })
 
